@@ -2,7 +2,33 @@
 
 Currently the search functionality of Katalon Studio only supports for **name, id, tag, comment, description**. This Katalon plug-in that allows you to search for Test Objects according to attributes within the ```.rs``` file in folder **Object Repository**.
 
-Sample ```.rs``` file:
+### Features
+- [X] Search for Test Objects with one or more phrases
+- [X] History of index and search
+- [X] Copy Test Object name into Clipboard
+
+It uses [Lucene](https://lucene.apache.org/) for index and search.
+
+### Demo
+Because a GIF is worth a thousand words.
+![demo1](https://user-images.githubusercontent.com/16775806/71560165-d7138e00-2a98-11ea-80e1-afeb11aa8b39.gif)
+
+
+### Example query: 
+
+Find an input element with name having **repository**
+```
+tag=input and name=repository
+```
+Find a web element with REST method
+```
+servicetype = restful
+```
+
+Note that currently, only 'and' operator is supported.
+
+
+### Sample ```.rs``` file:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <WebServiceRequestEntity>
@@ -29,23 +55,15 @@ Sample ```.rs``` file:
 
 ```
 
-### Features
-- [X] Search for Test Objects with one or more phrases
-- [X] History of index and search
-- [X] Copy Test Object name into Clipboard
-
-### Example query: 
-
-Find an input element with name having **repository**
+The above Test Object would match the query:
 ```
-tag=input and name=repository
-```
-Find a web element with REST method
-```
-servicetype = restful
+name=new request
 ```
 
-Note that currently, only 'and' operator is supported.
+or
+```
+restrequestmethod=get and selectormethod=basic
+```
 
 ### Supported properties:
 * name
@@ -70,7 +88,7 @@ Note that currently, only 'and' operator is supported.
 * wsdlAddress
 
 ### How to use
-1/ How to build to JAR file:
+1/ Build the JAR file:
 
 ```
 mvm clean install
