@@ -1,0 +1,16 @@
+<plugin>
+	<extension point="com.katalon.platform.extensions">
+		<point
+			id="testobjectmanager.extension.testObjectManagerActivationListener"
+			extensionPointId="com.katalon.platform.api.extension.pluginActivationListener"
+			implementationClass="testobjectmanager.extension.TestObjectManagerActivationListener">
+		</point>
+	</extension>
+	<extension point="com.katalon.platform.extensions">
+		<point
+			id="testobjectmanager.extension.testObjectManagerToolItem"
+			extensionPointId="com.katalon.platform.api.extension.newDropdownToolItem"
+			implementationClass="testobjectmanager.extension.TestObjectManagerToolItem">
+		</point>
+	</extension>
+</plugin>

@@ -1,0 +1,27 @@
+Example query: 
+	tag=input and name=repository
+	servicetype = restful
+
+Note that currently, only 'and' operator is supported for an aggregated query.
+
+Supported properties:
+	name
+	tag
+	elementGuidId
+	selectorMethod
+	xpath
+	css
+	basic
+	useRalativeImagePath
+	followRedirects
+	httpBody
+	httpBodyContent
+	httpBodyType
+	restRequestMethod
+	restUrl
+	serviceType
+	soapBody
+	soapHeader
+	soapRequestMethod
+	soapServiceFunction
+	wsdlAddress
