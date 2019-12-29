@@ -64,6 +64,11 @@ Note that currently, only 'and' operator is supported.
 * soapServiceFunction
 * wsdlAddress
 
+### Features
+- [ ] Search for Test Objects with one or more phrases
+- [ ] History of index and search
+- [ ] Copy Test Object name into Clipboard
+
 
 ### How to use
 1/ How to build to JAR file:
