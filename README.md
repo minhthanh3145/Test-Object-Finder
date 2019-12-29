@@ -1,5 +1,11 @@
 # Test-Object-Manager
 
+
+### Demo
+Because a GIF is worth a thousand words.
+![demo1](https://user-images.githubusercontent.com/16775806/71560165-d7138e00-2a98-11ea-80e1-afeb11aa8b39.gif)
+
+### Problem to be solved
 Currently the search functionality of Katalon Studio only supports for **name, id, tag, comment, description**. This Katalon plug-in that allows you to search for Test Objects according to attributes within the ```.rs``` file in folder **Object Repository**.
 
 ### Features
@@ -8,10 +14,6 @@ Currently the search functionality of Katalon Studio only supports for **name, i
 - [X] Copy Test Object name into Clipboard
 
 It uses [Lucene](https://lucene.apache.org/) for index and search.
-
-### Demo
-Because a GIF is worth a thousand words.
-![demo1](https://user-images.githubusercontent.com/16775806/71560165-d7138e00-2a98-11ea-80e1-afeb11aa8b39.gif)
 
 
 ### Example query: 
@@ -86,7 +88,7 @@ restrequestmethod=get and selectormethod=basic
 * soapRequestMethod
 * soapServiceFunction
 * wsdlAddress
-
+**Note**: You can search for a variable by ```name=<variableName>```
 ### How to use
 1/ Build the JAR file:
 
