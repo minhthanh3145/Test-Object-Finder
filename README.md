@@ -1,4 +1,4 @@
-# Test-Object-Manager
+# Test Object Fimder
 
 
 ### Demo
@@ -13,19 +13,27 @@ Currently the search functionality of Katalon Studio only supports for **name, i
 - [X] History of index and search
 - [X] Copy Test Object name into Clipboard
 
-It uses [Lucene](https://lucene.apache.org/) for index and search.
-
+This plug-in uses [Lucene](https://lucene.apache.org/) for index and search. Please visit [Github repo](https://github.com/minhthanh3145/Test-Object-Manager) for more information.
 
 ### Example query: 
 
-Find an input element with name having **repository**
+#### Find an input element with name containing ```repository``` (e.g ```input_username repository```)
 ```
 tag=input and name=repository
 ```
-Find a web element with REST method
+#### Find a Web Sevice element with REST method
 ```
 servicetype = restful
 ```
+#### Find a Web Service element that has a URL containing ```api.imgur.com``` (e.g ```https://api.imgur.com/v2/update```)
+```
+resturl=api.imgur.com
+````
+#### Find a Test Object with variable ```defaultVariable```
+```
+name=defaultVariable
+```
+
 
 Note that currently, only 'and' operator is supported.
 
@@ -88,16 +96,5 @@ restrequestmethod=get and selectormethod=basic
 * soapRequestMethod
 * soapServiceFunction
 * wsdlAddress
+
 **Note**: You can search for a variable by ```name=<variableName>```
-### How to use
-1/ Build the JAR file:
-
-```
-mvm clean install
-```
-2/ JAR file will be available in target folder.
-3/ Open Katalon Studio (7.0 or later).
-4/ **Tools > Plugin > Install Plugin** and choose the JAR File
-
-
-<a href="https://icons8.com/icon/119112/search-more">Search More icon by Icons8</a>
