@@ -1,4 +1,4 @@
-package testobjectmanager.main;
+// package testobjectmanager.main;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,19 +15,29 @@ import org.w3c.dom.Element;
 public class App {
     public static void main(String[] args) throws IOException {
         String pathToObjectFolder;
-        if (args.length <= 1) {
-            pathToObjectFolder = "./Object Repository";
-        } else {
-            pathToObjectFolder = args[1] + "./Object Repository";
-        }
+        String queryTag;
+        String queryValue;
 
-        String queryTag = "randomTag";
-        String queryValue = "randomValue";
+        if (args.length == 0) {
+            pathToObjectFolder = "./Object Repository";
+            queryTag = "tag";
+            queryValue = "input";
+        } else {
+            pathToObjectFolder = args[0] + "/Object Repository";
+            queryTag = args[1];
+            queryValue = args[2];
+        }
 
         long beginTime = System.nanoTime();
         List<String> results = searchForTagWithValueInFolder(queryTag, queryValue, pathToObjectFolder);
         long endTime = System.nanoTime();
-        System.out.println("Search elapsed: " + (endTime - beginTime) + "with " + results.size() + " results.");
+        System.out.println("Search elapsed: " + (endTime - beginTime) + " nanoseconds, with " + results.size() + " results.");
+        System.out.println("--------------------------------------------");
+        System.out.println("Files containing query: " + queryTag + "=" + queryValue);
+        System.out.println("--------------------------------------------");
+        for (String result : results) {
+            System.out.println(result);
+        }
     }
 
 
@@ -48,6 +58,12 @@ public class App {
 
     private static ArrayList<File> getAllRsFilesInFolder(String folder, boolean recursive) throws IOException {
         File folderFile = new File(folder);
+
+        if (folderFile == null || folderFile.listFiles() == null) {
+            System.out.println("Folder file is null: " + folder);
+            return new ArrayList<File>();
+        }
+
         ArrayList<File> files = new ArrayList<File>();
 
         for (File file : folderFile.listFiles()) {
