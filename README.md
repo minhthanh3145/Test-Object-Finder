@@ -17,14 +17,23 @@ This plug-in uses [Lucene](https://lucene.apache.org/) for index and search. Ple
 
 ### Example query: 
 
-Find an input element with name having **repository**
+#### Find an input element with name having **repository**
 ```
 tag=input and name=repository
 ```
-Find a web element with REST method
+#### Find a web element with REST method
 ```
 servicetype = restful
 ```
+#### Find a Web Service element that has a URL containing ```api.imgur.com``` (e.g ```https://api.imgur.com/v2/update```)
+```
+resturl=api.imgur.com
+````
+#### Find a Test Object with variable ```defaultVariable```
+```
+name=defaultVariable
+```
+
 
 Note that currently, only 'and' operator is supported.
 
