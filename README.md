@@ -17,11 +17,11 @@ This plug-in uses [Lucene](https://lucene.apache.org/) for index and search. Ple
 
 ### Example query: 
 
-#### Find an input element with name having **repository**
+#### Find an input element with name containing ```repository``` (e.g ```input_username repository```)
 ```
 tag=input and name=repository
 ```
-#### Find a web element with REST method
+#### Find a Web Sevice element with REST method
 ```
 servicetype = restful
 ```
