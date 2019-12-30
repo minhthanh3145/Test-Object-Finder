@@ -46,7 +46,7 @@ public class SearchTestObjectsUseCaseRepository implements ISearchTestObjectsUse
                 builder.add(query, Occur.MUST);
             }
 
-            ScoreDoc[] hits = isearcher.search(builder.build(), 10).scoreDocs;
+            ScoreDoc[] hits = isearcher.search(builder.build(), 999).scoreDocs;
             for (ScoreDoc hit : hits) {
                 returnedTestObjectFiles.add(isearcher.doc(hit.doc).get("file_location"));
             }

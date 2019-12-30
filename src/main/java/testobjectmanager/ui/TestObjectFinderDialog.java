@@ -57,15 +57,12 @@ public class TestObjectFinderDialog extends Dialog {
 
     private Text txtQueryString;
 
-    private IndexTestObjectsUseCase indexUseCase;
-
     private SearchTestObjectsUseCase searchUseCase;
 
     private UISynchronizeService uiSynchronizeService;
 
     public TestObjectFinderDialog(Shell parentShell) {
         super(parentShell);
-        indexUseCase = TestObjectManagerUseCaseProvider.getIntance().getIndexTestObjectsUseCase();
         searchUseCase = TestObjectManagerUseCaseProvider.getIntance().getSearchTestObjectsUseCase();
         uiSynchronizeService = ApplicationManager.getInstance()
                 .getUIServiceManager()
@@ -199,18 +196,6 @@ public class TestObjectFinderDialog extends Dialog {
                         @Override
                         public void run(IProgressMonitor monitor)
                                 throws InvocationTargetException, InterruptedException {
-                            monitor.beginTask("Indexing...", 10);
-                            indexUseCase.execute(IndexTestObjectsUseCaseRequest.builder()
-                                    .pathToFolder(GlobalConfiguration.getInstance().getPathToFolderContainingIndex())
-                                    .build());
-                            monitor.done();
-                        }
-                    });
-
-                    runWithProgressDialog(new IRunnableWithProgress() {
-                        @Override
-                        public void run(IProgressMonitor monitor)
-                                throws InvocationTargetException, InterruptedException {
                             monitor.beginTask("Searching...", 10);
                             uiSynchronizeService.asyncExec(() -> {
                                 searchUseCase
@@ -270,6 +255,27 @@ public class TestObjectFinderDialog extends Dialog {
                 });
             }
         });
+
+        createButton(parent, IDialogConstants.BACK_ID, "Index Test Objects", false);
+
+        getButton(IDialogConstants.BACK_ID).addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                runWithProgressDialog(new IRunnableWithProgress() {
+                    @Override
+                    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                        monitor.beginTask("Indexing...", 10);
+                        IndexTestObjectsUseCase indexUseCase = TestObjectManagerUseCaseProvider.getIntance()
+                                .getIndexTestObjectsUseCase();
+                        indexUseCase.execute(IndexTestObjectsUseCaseRequest.builder()
+                                .pathToFolder(GlobalConfiguration.getInstance().getPathToFolderContainingIndex())
+                                .build());
+                        monitor.done();
+                    }
+                });
+            }
+        });
+
         GridLayout layout = (GridLayout) parent.getLayout();
         layout.numColumns++;
         layout.makeColumnsEqualWidth = false;

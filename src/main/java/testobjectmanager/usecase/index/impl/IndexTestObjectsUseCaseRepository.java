@@ -69,7 +69,7 @@ public class IndexTestObjectsUseCaseRepository implements IIndexTestObjectsUseCa
     @Override
     public void indexTestObjectsToFolder(String pathToFolder) throws RepositoryException {
         IndexWriter iwriter = null;
-        long startTime = System.nanoTime();
+        long startTime = 0;
         try {
             Analyzer analyzer = new StandardAnalyzer();
             IOUtils.rm(Paths.get(pathToFolder));
@@ -81,10 +81,11 @@ public class IndexTestObjectsUseCaseRepository implements IIndexTestObjectsUseCa
             FolderEntity objectRepoFolder = folderController.getFolder(currentProject, "Object Repository");
             List<FolderEntity> childFolders = folderController.getChildFolders(currentProject, objectRepoFolder);
             childFolders.add(objectRepoFolder);
+            startTime = System.nanoTime();
             // Walk down all the folders, retrieve test object files and index them
             List<Document> luceneDocs = Files.find(Paths.get(objectRepoFolder.getFolderLocation()), 999, (p, bfa) -> {
                 return bfa.isRegularFile();
-            }).map(to -> {
+            }).parallel().map(to -> {
                 try {
                     String locationToFile = to.toString();
                     Document luceneDoc = new Document();
@@ -110,14 +111,14 @@ public class IndexTestObjectsUseCaseRepository implements IIndexTestObjectsUseCa
             System.out.println(ExceptionUtils.getStackTrace(e2));
             throw new RepositoryException(e2.getMessage());
         } finally {
+            // Add the index performance to history
+            PerformanceCollector.getInstance().addToHistory("index", "",
+                    new Long((System.nanoTime() - startTime) / 1000000), new Date());
             try {
                 iwriter.close();
             } catch (IOException e) {
                 System.out.println(ExceptionUtils.getStackTrace(e));
             }
-            // Add the index performance to history
-            PerformanceCollector.getInstance().addToHistory("index", "",
-                    new Long((System.nanoTime() - startTime) / 1000000), new Date());
         }
     }
 

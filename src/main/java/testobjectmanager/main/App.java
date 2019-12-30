@@ -1,16 +1,20 @@
-// package testobjectmanager.main;
+package testobjectmanager.main;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
-import java.lang.System;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.stream.Collectors;
+
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class App {
     public static void main(String[] args) throws IOException {
@@ -31,7 +35,8 @@ public class App {
         long beginTime = System.nanoTime();
         List<String> results = searchForTagWithValueInFolder(queryTag, queryValue, pathToObjectFolder);
         long endTime = System.nanoTime();
-        System.out.println("Search elapsed: " + (endTime - beginTime) + " nanoseconds, with " + results.size() + " results.");
+        System.out.println(
+                "Search elapsed: " + (endTime - beginTime) + " nanoseconds, with " + results.size() + " results.");
         System.out.println("--------------------------------------------");
         System.out.println("Files containing query: " + queryTag + "=" + queryValue);
         System.out.println("--------------------------------------------");
@@ -40,63 +45,52 @@ public class App {
         }
     }
 
-
-    private static ArrayList<String> searchForTagWithValueInFolder(
-            String queryTag, String queryValue, String pathToObjectFolder) throws IOException {
-
-        ArrayList<File> allRsFiles = getAllRsFilesInFolder(pathToObjectFolder, true);
-        ArrayList<String> results = new ArrayList<String>();
-
-        for (File rsFile : allRsFiles) {
-            if (xmlContainsQueryWithValue(rsFile, queryTag, queryValue)) {
-                results.add(rsFile.getCanonicalPath());
-            }
-        }
-
-        return results;
-    }
-
-    private static ArrayList<File> getAllRsFilesInFolder(String folder, boolean recursive) throws IOException {
-        File folderFile = new File(folder);
-
-        if (folderFile == null || folderFile.listFiles() == null) {
-            System.out.println("Folder file is null: " + folder);
-            return new ArrayList<File>();
-        }
-
-        ArrayList<File> files = new ArrayList<File>();
-
-        for (File file : folderFile.listFiles()) {
-            if (file.isFile()) {
-                if (file.getName().toLowerCase().endsWith(".rs")) {
-                    files.add(file);
-                }
-            } else if (recursive) {
-                files.addAll(getAllRsFilesInFolder(file.getCanonicalPath(), recursive));
-            }
-        }
-
+    public static List<String> searchForTagWithValueInFolder(String queryTag, String queryValue, String katalonProject)
+            throws IOException {
+        long beginTime = System.nanoTime();
+        String pathToObjectFolder = katalonProject + "/Object Repository";
+        List<String> files = Files.find(Paths.get(pathToObjectFolder), 999, (a, p) -> {
+            return p.isRegularFile();
+        })
+                .parallel()
+                .map(path -> path.toAbsolutePath().toString())
+                .filter(strPath -> xmlContainsQueryWithValue(new File(strPath), queryTag, queryValue))
+                .collect(Collectors.toCollection(ArrayList<String>::new));
+        System.out.println(queryTag + "=" + queryValue + " " + (System.nanoTime() - beginTime) / 1000000);
         return files;
     }
 
     private static boolean xmlContainsQueryWithValue(File file, String tag, String value) {
         try {
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(file);
-			doc.getDocumentElement().normalize();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            doc.getDocumentElement().normalize();
+            NodeList nodes = doc.getElementsByTagName(tag);
+            for (int nodeIndex = 0; nodeIndex < nodes.getLength(); ++nodeIndex) {
+                if (nodes.item(nodeIndex).getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                    Element element = (Element) nodes.item(nodeIndex);
+                    if (element.getTextContent().contains(value)) {
+                        return true;
+                    }
+                }
+            }
 
-			NodeList nodes = doc.getElementsByTagName(tag);
-
-			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); ++nodeIndex) {
-				Element element = (Element) nodes.item(nodeIndex);
-				if (element.getTextContent().contains(value)) {
-					return true;
-				}
-			}
-			return false;
+            NodeList nList = doc.getElementsByTagName("webElementProperties");
+            for (int i = 0; i < nList.getLength(); i++) {
+                org.w3c.dom.Node node = nList.item(i);
+                if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                    org.w3c.dom.Element eElement = (org.w3c.dom.Element) node;
+                    String name = eElement.getElementsByTagName("name").item(0).getTextContent();
+                    String val = eElement.getElementsByTagName("value").item(0).getTextContent();
+                    if (name.equals(tag.trim()) && val.contains(value.trim())) {
+                        return true;
+                    }
+                }
+            }
         } catch (Exception e) {
-            return false;
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
+        return false;
     }
 }
